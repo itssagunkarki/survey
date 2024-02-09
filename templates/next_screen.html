@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Next Screen{% endblock %}
+
+{% block content %}
+<h1>Children's Behavior Questionnaire</h1>
+<div class="alert alert-warning" role="alert" id='update-info'>
+    Verify your data entry on this page.
+</div>
+
+<div class="questions-container">
+    {% for question_num, question_details in data['questionsCopy'].items() %}
+    <div class="question-container">
+        <button type="button" class="btn btn-light option-button" id ="update-{{question_num}}" data-question="" data-option="Update"></button>
+
+        <p class="question-details">{{ question_num }}. {{ question_details['question_prompt'] }}</p>
+        <div class="option-buttons" id="option-buttons-{{ question_num }}">
+            <!-- not answered button-->
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == 0 %}btn-primary{% else %}btn-outline-dark{% endif %}" data-question="{{ question_num }}" data-option="0">Not Answered</button>
+
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '1' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="1">Option 1</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '2' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="2">Option 2</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '3' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="3">Option 3</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '4' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="4">Option 4</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '5' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="5">Option 5</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '6' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="6">Option 6</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '7' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="7">Option 7</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '-1' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="-1">N/A</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    .question-container {
+        text-align: left;
+    }
+</style>
+
+<script>
+    const questionsCopy = {{ data['questionsCopy']|tojson|safe }};
+
+    const updateButtonColor = (questionNum, option) => {
+        const firstEntry = questionsCopy[questionNum]['first_entry'];
+        const firstEntryButton = document.querySelector(`#option-buttons-${questionNum} .option-button[data-option="${firstEntry}"]`);
+        const updateButton = document.querySelector(`#update-${questionNum}`);
+        const lastEntry = questionsCopy[questionNum]['last_entry'];
+        let notAnsweredButton = document.querySelector(`#option-buttons-${questionNum} .option-button[data-option="0"]`);
+
+        if (lastEntry !== option) {
+            questionsCopy[questionNum]['last_entry'] = option;
+
+            const lastEntryButton = document.querySelector(`#option-buttons-${questionNum} .option-button[data-option="${lastEntry}"]`);
+            lastEntryButton.classList.remove('btn-primary');
+            const newEntryButton = document.querySelector(`#option-buttons-${questionNum} .option-button[data-option="${option}"]`);
+            newEntryButton.classList.add('btn-primary');
+
+            if (option != firstEntry) {
+                firstEntryButton.classList.add('btn-secondary');
+                
+                updateButton.disabled = false;
+                updateButton.classList.remove('btn-light');
+                updateButton.classList.add('btn-danger');
+                updateButton.textContent = 'Updated';
+                
+            } else {
+                firstEntryButton.classList.remove('btn-secondary');
+
+                updateButton.disabled = true;
+                if (updateButton.classList.contains('btn-danger')) {
+                    updateButton.classList.remove('btn-danger');
+                }
+                updateButton.classList.add('btn-light');
+                updateButton.textContent = '';
+            }
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        for (let questionNum in questionsCopy) {
+            const firstEntry = questionsCopy[questionNum]['first_entry'];
+            const button = document.querySelector(`#option-buttons-${questionNum} .option-button[data-option="${firstEntry}"]`);
+            if (firstEntry != '') {
+                button.classList.add('btn-primary');
+            }
+        }
+    });
+
+    const optionButtons = document.querySelectorAll('.option-button');
+    optionButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const questionNum = this.getAttribute('data-question');
+            const option = this.getAttribute('data-option');
+            updateButtonColor(questionNum, option);
+        });
+    });
+
+</script>
+
+{% endblock %}
