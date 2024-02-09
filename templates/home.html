@@ -21,6 +21,8 @@
 <h1>Children's Behavior Questionnaire </h1>
 <hr>
 
+<!-- Add Next button -->
+<button id="nextButton" class="btn btn-primary">Next</button>
 
 
 <div class="questions-container">
@@ -41,8 +43,6 @@
     {% endfor %}
 </div>
 
-<!-- Add Next button -->
-<button id="nextButton" class="btn btn-primary">Next</button>
 
 <script>
 
@@ -79,6 +79,40 @@
             progressBar.style.width = `${progress}%`;
             progressBar.textContent = `${progress.toFixed(2)}%`;
         });
+    });
+
+    const nextButton = document.getElementById('nextButton');
+    nextButton.addEventListener('click', () => {
+        
+
+        // Send the selected options to the server
+        fetch('/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                questionsCopy: questionsCopy,
+            }),
+        })
+        .then(response => {
+            // Check if the response is a redirect
+            if (response.redirected) {
+                // Redirect the user to the specified URL
+                window.location.href = response.url;
+            } else {
+                // Parse the JSON response
+                return response.json();
+            }
+        })
+        .then(data => {
+            // Handle JSON response if needed
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+
     });
     
     
