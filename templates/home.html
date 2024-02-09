@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block content %}
+<!-- Calculate progress -->
+{% set total_questions = questions|length %}
+{% set answered_questions = 0 %}
+{% for question_num, question_details in questions.items() %}
+    {% if question_num in selectedOptions %}
+        {% set answered_questions = answered_questions + 1 %}
+    {% endif %}
+{% endfor %}
+{% set progress = (answered_questions / total_questions) * 100 %}
+
+<!-- Display progress bar -->
+<div class="progress progress-container" style="margin-bottom: 20px;">
+    <div class="progress-bar bg-success" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ progress }}%</div>
+</div>
+
+<h1>Children's Behavior Questionnaire </h1>
+<hr>
+
+
+
+<div class="questions-container">
+    {% for question_num, question_details in questions.items() %}
+    <div class="question-container" style="display: flex; align-items: center;">
+        <p class="question-details">{{ question_num }}. {{ question_details['question_prompt'] }}</p>
+        <div class="option-buttons" id="option-buttons-{{ question_num }}">
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="1">Option 1</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="2">Option 2</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="3">Option 3</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="4">Option 4</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="5">Option 5</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="6">Option 6</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="7">Option 7</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="-1">N/A</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Add Next button -->
+<button id="nextButton" class="btn btn-primary">Next</button>
+
+<script>
+
+    const optionButtons = document.querySelectorAll('.option-button');
+    let questionsCopy = {{ questions|tojson|safe }};
+    let selectedOptions = {};
+    
+    optionButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const questionNum = button.getAttribute('data-question');
+            const option = button.getAttribute('data-option');
+    
+            // Update the selected option directly in the selectedOptions object
+            selectedOptions[questionNum] = option;
+    
+            // Update the selected option in the questionsCopy
+            questionsCopy[questionNum]['first_entry'] = option;
+    
+            // Remove the 'btn-primary' class from all buttons of this question
+            const buttonsOfQuestion = document.querySelectorAll(`#option-buttons-${questionNum} .option-button`);
+            buttonsOfQuestion.forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline-primary');
+            });
+    
+            // Add 'btn-primary' class to the clicked button
+            button.classList.remove('btn-outline-primary');
+            button.classList.add('btn-primary');
+    
+            // Recalculate progress and update progress bar
+            const totalQuestions = Object.keys(selectedOptions).length; // Use the number of answered questions as the total questions answered
+            const progress = (totalQuestions / {{ total_questions }}) * 100; // Use the total number of questions calculated in the template
+            const progressBar = document.querySelector('.progress-bar');
+            progressBar.style.width = `${progress}%`;
+            progressBar.textContent = `${progress.toFixed(2)}%`;
+        });
+    });
+    
+    
+</script>
+
+{% endblock %}
