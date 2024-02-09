@@ -22,21 +22,25 @@
 
 .question-container {
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
     align-items: center;
     width: 100%;
     background-color: rgb(250, 252, 253);
     padding: 10px;
     margin: 4px;
+    text-align: left;
 }
 
 .question-details {
-    margin-right: 10px; /* Adjust as needed */
+    margin-right: auto; /* Pushes the option buttons to the end */
     padding: 10px;
 }
 
 .option-buttons {
     display: flex;
+    flex-direction: row;
+    justify-content: flex-end; /* Aligns the buttons to the end */
+    align-items: center;
 }
 
 .option-buttons button {
@@ -57,5 +61,3 @@
     width: 100%;
     z-index: 1000; /* Ensure it's above other content */
 }
-
-
