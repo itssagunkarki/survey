@@ -5,8 +5,11 @@
 {% block content %}
 <h1>Children's Behavior Questionnaire</h1>
 <div class="alert alert-warning" role="alert" id='update-info'>
-    Verify your data entry on this page.
+    Verify your data entry on this page. If you press button other than the previously selected option, the previously selected button will turn grey and it will say updated in front of the question.
 </div>
+
+<!-- Add Next button -->
+<button id="nextButton" class="btn btn-primary">Next</button>
 
 <div class="questions-container">
     {% for question_num, question_details in data['questionsCopy'].items() %}
@@ -16,16 +19,16 @@
         <p class="question-details">{{ question_num }}. {{ question_details['question_prompt'] }}</p>
         <div class="option-buttons" id="option-buttons-{{ question_num }}">
             <!-- not answered button-->
-            <button type="button" class="btn option-button {% if question_details['first_entry'] == 0 %}btn-primary{% else %}btn-outline-dark{% endif %}" data-question="{{ question_num }}" data-option="0">Not Answered</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == 0 %}btn-outline-dark{% else %}btn-outline-dark{% endif %}" data-question="{{ question_num }}" data-option="0">Not Answered</button>
 
-            <button type="button" class="btn option-button {% if question_details['first_entry'] == '1' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="1">Option 1</button>
-            <button type="button" class="btn option-button {% if question_details['first_entry'] == '2' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="2">Option 2</button>
-            <button type="button" class="btn option-button {% if question_details['first_entry'] == '3' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="3">Option 3</button>
-            <button type="button" class="btn option-button {% if question_details['first_entry'] == '4' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="4">Option 4</button>
-            <button type="button" class="btn option-button {% if question_details['first_entry'] == '5' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="5">Option 5</button>
-            <button type="button" class="btn option-button {% if question_details['first_entry'] == '6' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="6">Option 6</button>
-            <button type="button" class="btn option-button {% if question_details['first_entry'] == '7' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="7">Option 7</button>
-            <button type="button" class="btn option-button {% if question_details['first_entry'] == '-1' %}btn-primary{% endif %}" data-question="{{ question_num }}" data-option="-1">N/A</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '1' %}btn-primary-outline{% endif %}" data-question="{{ question_num }}" data-option="1">Option 1</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '2' %}btn-primary-outline{% endif %}" data-question="{{ question_num }}" data-option="2">Option 2</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '3' %}btn-primary-outline{% endif %}" data-question="{{ question_num }}" data-option="3">Option 3</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '4' %}btn-primary-outline{% endif %}" data-question="{{ question_num }}" data-option="4">Option 4</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '5' %}btn-primary-outline{% endif %}" data-question="{{ question_num }}" data-option="5">Option 5</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '6' %}btn-primary-outline{% endif %}" data-question="{{ question_num }}" data-option="6">Option 6</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '7' %}btn-primary-outline{% endif %}" data-question="{{ question_num }}" data-option="7">Option 7</button>
+            <button type="button" class="btn option-button {% if question_details['first_entry'] == '-1' %}btn-primary-outline{% endif %}" data-question="{{ question_num }}" data-option="-1">N/A</button>
         </div>
     </div>
     {% endfor %}
@@ -39,22 +42,23 @@
 
 <script>
     const questionsCopy = {{ data['questionsCopy']|tojson|safe }};
-
+    
     const updateButtonColor = (questionNum, option) => {
         const firstEntry = questionsCopy[questionNum]['first_entry'];
         const firstEntryButton = document.querySelector(`#option-buttons-${questionNum} .option-button[data-option="${firstEntry}"]`);
         const updateButton = document.querySelector(`#update-${questionNum}`);
         const lastEntry = questionsCopy[questionNum]['last_entry'];
         let notAnsweredButton = document.querySelector(`#option-buttons-${questionNum} .option-button[data-option="0"]`);
-
+        
         if (lastEntry !== option) {
             questionsCopy[questionNum]['last_entry'] = option;
-
+            
             const lastEntryButton = document.querySelector(`#option-buttons-${questionNum} .option-button[data-option="${lastEntry}"]`);
             lastEntryButton.classList.remove('btn-primary');
             const newEntryButton = document.querySelector(`#option-buttons-${questionNum} .option-button[data-option="${option}"]`);
             newEntryButton.classList.add('btn-primary');
-
+            
+            
             if (option != firstEntry) {
                 firstEntryButton.classList.add('btn-secondary');
                 
@@ -65,7 +69,7 @@
                 
             } else {
                 firstEntryButton.classList.remove('btn-secondary');
-
+                
                 updateButton.disabled = true;
                 if (updateButton.classList.contains('btn-danger')) {
                     updateButton.classList.remove('btn-danger');
@@ -75,17 +79,17 @@
             }
         }
     };
-
+    
     document.addEventListener('DOMContentLoaded', function () {
         for (let questionNum in questionsCopy) {
             const firstEntry = questionsCopy[questionNum]['first_entry'];
             const button = document.querySelector(`#option-buttons-${questionNum} .option-button[data-option="${firstEntry}"]`);
             if (firstEntry != '') {
-                button.classList.add('btn-primary');
+                /** button.classList.add('btn-primary');*/
             }
         }
     });
-
+    
     const optionButtons = document.querySelectorAll('.option-button');
     optionButtons.forEach(button => {
         button.addEventListener('click', function () {
@@ -93,6 +97,40 @@
             const option = this.getAttribute('data-option');
             updateButtonColor(questionNum, option);
         });
+    });
+
+    const nextButton = document.getElementById('nextButton');
+    nextButton.addEventListener('click', () => {
+        
+
+        // Send the selected options to the server
+        fetch('/submit_last_entry', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                questionsCopy: questionsCopy,
+            }),
+        })
+        .then(response => {
+            // Check if the response is a redirect
+            if (response.redirected) {
+                // Redirect the user to the specified URL
+                window.location.href = response.url;
+            } else {
+                // Parse the JSON response
+                return response.json();
+            }
+        })
+        .then(data => {
+            // Handle JSON response if needed
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+
     });
 
 </script>
