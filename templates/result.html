@@ -4,8 +4,6 @@
 
 {% block content %}
 
-
-
 <div class="container">
     <h1 class="mt-5">Result</h1>
     <hr>
@@ -21,16 +19,15 @@
                 </tr>
             </thead>
             <tbody>
-                    {% for key, value in data.items() %}
-                    <tr>
-                        <td>{{key}}</td>
-                        <td>{{data[key]["sum_ans"]}}</td>
-                        <td>{{data[key]["num_ans"]}}</td>
-                        <td>{{data[key]["mean_score"]}}</td>
-                    </tr>
-    
-                    {% endfor %}
-                </tbody>
+                {% for key, value in data.items() %}
+                <tr>
+                    <td>{{key}}</td>
+                    <td>{{data[key]["sum_ans"]}}</td>
+                    <td>{{data[key]["num_ans"]}}</td>
+                    <td>{{data[key]["mean_score"]}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
 
@@ -46,10 +43,8 @@
             </thead>
             <tbody>
                 <tr>
-
                     <td>Output Folder</td>
                     <td>output/results/</td>
-
                 </tr>
                 <tr>
                     <td>File Name</td>
@@ -60,5 +55,12 @@
     </div>
 </div>
 
+<button type="button" class="btn btn-danger btn-lg" onclick="redirectToHome()">New Data Entry</button>
 
+<script>
+    function redirectToHome() {
+        window.location.href = "{{ url_for('home') }}";
+    }
+</script>
 {% endblock %}
+
