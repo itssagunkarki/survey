@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Result {% endblock %}
+
+{% block content %}
+
+
+
+<div class="container">
+    <h1 class="mt-5">Result</h1>
+    <hr>
+    
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Abbreviation</th>
+                    <th scope="col">Sum answers</th>
+                    <th scope="col">num questions</th>
+                    <th scope="col">mean score</th>
+                </tr>
+            </thead>
+            <tbody>
+                    {% for key, value in data.items() %}
+                    <tr>
+                        <td>{{key}}</td>
+                        <td>{{data[key]["sum_ans"]}}</td>
+                        <td>{{data[key]["num_ans"]}}</td>
+                        <td>{{data[key]["mean_score"]}}</td>
+                    </tr>
+    
+                    {% endfor %}
+                </tbody>
+        </table>
+    </div>
+
+    <h5>Output Details:</h5>
+    <hr>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+
+                    <td>Output Folder</td>
+                    <td>output/results/</td>
+
+                </tr>
+                <tr>
+                    <td>File Name</td>
+                    <td>{{timestamp}}.xlsx</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}

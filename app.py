@@ -6,7 +6,6 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 output_folder = os.path.join(os.getcwd(), 'output')
 if not os.path.exists(output_folder):
     os.mkdir(output_folder)
@@ -29,7 +28,6 @@ def clear_temp_folder():
 
 @app.route('/')
 def home():
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     clear_temp_folder()
     questions_dict = questions.get_questions('questions_template.xlsx', 'questions')
     return render_template('home.html', questions=questions_dict)
@@ -40,7 +38,7 @@ def submit_first_entry():
         data = request.get_json()
         # Process the received data as needed
         # Generate timestamp for the filename
-        filename = f"output_{timestamp}.json"
+        filename = f"first_entry.json"
         # Save the data to a file with the generated filename
         with open(os.path.join(output_folder, "temp_first_entry", filename), 'w') as f:
             json.dump(data, f)
@@ -63,7 +61,7 @@ def submit_last_entry():
         data = request.get_json()
         # Process the received data as needed
         # Generate timestamp for the filename
-        filename = f"output_last_{timestamp}.json"
+        filename = f"last_entry.json"
         # Save the data to a file with the generated filename
         with open(os.path.join(output_folder, "temp_last_entry", filename), 'w') as f:
             json.dump(data, f)
@@ -76,11 +74,12 @@ def submit_last_entry():
 @app.route('/result/<filename>')
 def result(filename):
     # Read the data from the file using the provided filename
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     with open(os.path.join(output_folder, "temp_last_entry",filename), 'r') as f:
         data = json.load(f)
 
-    final_output = questions.process_data('questions_template.xlsx', os.path.join(output_folder, "temp_last_entry",filename))
-    return render_template('result.html', data=final_output)
+    final_output = questions.process_data('questions_template.xlsx', os.path.join(output_folder, "temp_last_entry",filename), timestamp)
+    return render_template('result.html', data=final_output, timestamp=timestamp)
 
 
 
