@@ -6,11 +6,11 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-output_folder_root = os.path.join(os.getcwd(), 'output')
+output_folder = os.path.join(os.getcwd(), 'output')
 output_first_entry = os.path.join(os.getcwd(), 'output/temp_first_entry')
 output_last_entry = os.path.join(os.getcwd(), 'output/temp_last_entry')
 
-def output_folder(folder):
+def create_output_folder(folder):
     if not os.path.exists(folder):
         os.mkdir(folder)
 
@@ -25,9 +25,9 @@ def delete_folder(folder):
 
 def clear_temp_folder():
     # create output folder if it does not exist
-    output_folder(output_folder_root)
-    output_folder(output_first_entry)
-    output_folder(output_last_entry)
+    create_output_folder(output_folder)
+    create_output_folder(output_first_entry)
+    create_output_folder(output_last_entry)
 
     # if it already exists, remove all the temp files
     temp_first_folder = os.path.join(output_folder, 'temp_first_entry')
