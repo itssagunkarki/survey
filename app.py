@@ -9,6 +9,7 @@ app = Flask(__name__)
 output_folder = os.path.join(os.getcwd(), 'output')
 output_first_entry = os.path.join(os.getcwd(), 'output/temp_first_entry')
 output_last_entry = os.path.join(os.getcwd(), 'output/temp_last_entry')
+output_results = os.path.join(os.getcwd(), 'output/results')
 
 def create_output_folder(folder):
     if not os.path.exists(folder):
@@ -39,6 +40,7 @@ def clear_temp_folder():
 @app.route('/')
 def home():
     clear_temp_folder()
+    create_output_folder(output_results)
     questions_dict = questions.get_questions('questions_template.xlsx', 'questions')
     return render_template('home.html', questions=questions_dict)
 
