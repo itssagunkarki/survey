@@ -12,10 +12,16 @@ output_last_entry = os.path.join(os.getcwd(), 'output/temp_last_entry')
 output_results = os.path.join(os.getcwd(), 'output/results')
 
 def create_output_folder(folder):
+    """
+    Create the output folder if it does not exist
+    """
     if not os.path.exists(folder):
         os.mkdir(folder)
 
 def delete_folder(folder):
+    """
+    Delete all the files in the folder
+    """
     for file in os.listdir(folder):
         file_path = os.path.join(folder, file)
         try:
@@ -60,12 +66,14 @@ def submit_first_entry():
         # Handle other HTTP methods (optional)
         return jsonify({'error': 'Method Not Allowed'}), 405
 
+
 @app.route('/next_screen/<filename>')
 def next_screen(filename):
     # Read the data from the file using the provided filename
     with open(os.path.join(output_folder, "temp_first_entry",filename), 'r') as f:
         data = json.load(f)
     return render_template('next_screen.html', data=data)
+
 
 @app.route('/submit_last_entry', methods=['POST'])
 def submit_last_entry():
@@ -82,6 +90,7 @@ def submit_last_entry():
     else:
         # Handle other HTTP methods (optional)
         return jsonify({'error': 'Method Not Allowed'}), 405
+    
     
 @app.route('/result/<filename>')
 def result(filename):

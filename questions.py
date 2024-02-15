@@ -3,6 +3,9 @@ import json
 
 
 def get_questions(file_path, sheet_name):
+    '''
+    Read all the questions from the excel file and return a dictionary of questions and variables to store first and last entry
+    '''
     df_questions = pd.read_excel(file_path, sheet_name=sheet_name)
     questions_dict = {}
     
@@ -16,6 +19,9 @@ def get_questions(file_path, sheet_name):
     return questions_dict
 
 def clean_entered_data(template_path, data_path):
+    """
+    Some questions, may need reverse scoring, there is a column in the template that indicates if the question needs to be reversed or not
+    """
     data= json.loads(open(data_path).read())
     df_x = pd.DataFrame.from_dict(data['questionsCopy']).T.reset_index().rename(columns={'index':'cbq_num'})
     df_x['cbq_num'] = df_x['cbq_num'].astype(int)
